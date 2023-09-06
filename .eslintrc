@@ -1,0 +1,16 @@
+{
+    "extends": [
+        "plugin:vue/vue3-recommended",
+        "@vue/eslint-config-typescript"
+    ],
+    "rules": {
+    },
+    "settings": {
+        "import/resolver": {
+            "alias": {
+                "map": [["@", "./src"]],
+                "extensions": [",.js", ",.ts", ",.vue"]
+            }
+        }
+    }
+}

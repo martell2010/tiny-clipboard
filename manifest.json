@@ -1,0 +1,29 @@
+{
+    "name": "Clipboard",
+    "manifest_version": 3,
+    "version": "0.1",
+    "description": "Cool clipboard extention for manage your data",
+    "action": {
+      "default_title": "Clipboard Popup",
+      "default_popup": "index.html"
+    },
+    "background": {
+      "service_worker": "src/background.ts"
+    },
+    "content_scripts": [
+      {
+        "matches": ["http://*/*","https://*/*"],
+        "js": ["src/content-scripts/content.ts"]
+      }
+    ],
+    "permissions": [
+      "activeTab",
+      "storage",
+      "unlimitedStorage",
+      "scripting",
+      "tabs",
+      "contextMenus",
+      "clipboardWrite",
+      "clipboardRead"
+    ]
+}
