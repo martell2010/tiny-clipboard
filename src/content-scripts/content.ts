@@ -1,24 +1,27 @@
-import { MESSAGE_TYPE } from "@/types/message-types";
-import browser from "webextension-polyfill";
-import {ClipboardItem} from "@/types/clipboard.ts";
+import { ClipboardData } from "@/types/clipboard.ts";
+import { ITEM_PREFIX_KEY } from "@/constants";
 
-const errorHandler = (e: unknown) => console.warn('Error', e)
+const errorHandler = (e: unknown) => console.warn('Error', e);
+
 document.addEventListener('copy',  (event) => {
     const text = window?.getSelection()?.toString() ?? '';
     const icon = document.querySelector('[rel="shortcut icon"]') || document.querySelector('[rel="icon"]');
+    const date = new Date();
+    const id = date.getTime();
+
     console.log({event, text})
 
-    const payload: ClipboardItem = {
+    const payload: ClipboardData = {
+        id,
         title: document.title,
-        date: new Date(),
+        date,
         url: window.location.href,
+        hostname: window.location.hostname,
         content: text,
         icon: (icon as HTMLLinkElement)?.href ?? '',
     }
 
-    chrome.storage.sync.get(["cb"]).then((result) => {
-        chrome.storage.sync.set({ cb: [payload, ...(result?.cb || [])] }).catch(errorHandler)
-        browser.runtime.sendMessage({ type: MESSAGE_TYPE.COPY, payload }).catch(errorHandler)
-    })
+    chrome.storage.sync.set({ [`${ITEM_PREFIX_KEY}${id}`]: payload }).catch(errorHandler)
 
-})
+});
+

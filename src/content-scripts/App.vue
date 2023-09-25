@@ -3,56 +3,103 @@
   <div class="app-clipboard">
     <header class="app-clipboard__header">
       <div class="app-clipboard__header-logo">
-        CB
+        <img
+          :src="logo"
+          alt="clipboard"
+        >
+        Tiny clipboard
       </div>
       <div class="app-clipboard__header-setting">
         #
       </div>
     </header>
     <main class="app-clipboard__content">
-      <app-items-list>
-        <app-item
-          v-for="(item, i) in clipboardList"
-          :key="i"
-          :data="item"
-        />
-      </app-items-list>
+      <app-card-list>
+        <app-card-group
+          v-for="(group, key) in clipboardList"
+          :key="key"
+          :group="group"
+        >
+          <template #default="{ item, isSingle, isGrouped, onToggle }">
+            <app-card
+              :is-grouped="isGrouped"
+              :is-single="isSingle"
+              :data="item"
+              @toggle="onToggle"
+              @copy="onCopy"
+              @link="onLink"
+              @remove="onRemove"
+            />
+          </template>
+        </app-card-group>
+      </app-card-list>
     </main>
   </div>
 </template>
 
 <script setup lang="ts">
-import {onMounted, ref} from "vue";
-import {MESSAGE_TYPE} from "@/types/message-types";
-import {ClipboardItem} from "@/types/clipboard.ts";
-import AppItem from "@/components/app-item.vue";
-import AppItemsList from "@/components/app-items-list.vue";
+import { onMounted, onUnmounted, ref } from "vue";
+// import { RecycleScroller } from 'vue-virtual-scroller'
+// import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
+import { ClipboardData } from "@/types/clipboard.ts";
+import AppCard from "@/components/app-card.vue";
+import AppCardList from "@/components/app-card-list.vue";
+import AppCardGroup from "@/components/app-card-group.vue";
+import { ITEM_PREFIX_KEY } from "@/constants";
+import logo from '@/assets/logo.svg';
 
+type ClipboardGroupedList = Record<ClipboardData['hostname'], ClipboardData[]>;
 
-const clipboardList = ref<ClipboardItem[]>([])
+const clipboardList = ref<ClipboardGroupedList>({});
+
+const groupByHosName = (data: ClipboardGroupedList, [,target]:[string,ClipboardData]) => {
+  if(target.hostname in data) {
+    data[target.hostname].push(target);
+    return data;
+  }
+
+  return { ...data, [target.hostname]: [target]}
+}
+
 const onStorageChange = () => {
-  chrome.storage.sync.get(["cb"]).then((result) => {
-    console.log("Value currently is " + result.cb);
-    clipboardList.value = result.cb ?? []
+  chrome.storage.sync.get().then((result) => {
+    clipboardList.value = Object.entries(result)
+        .filter(([k]) =>k.includes(ITEM_PREFIX_KEY))
+        .sort(([, a]:[string, ClipboardData], [, b]:[string, ClipboardData]) => b.id - a.id)
+        .reduce(groupByHosName, {})
   });
 }
 
+const onRemove = (key: number) => {
+  chrome.storage.sync.remove(`${ITEM_PREFIX_KEY}${key}`);
+};
 
-onMounted(async () => {
+const onCopy = (data: ClipboardData) => {
+  const type = "text/plain";
+  const blob = new Blob([data.content], { type });
+  const d = [new ClipboardItem({ [type]: blob })];
+
+  navigator.clipboard.write(d);
+}
+
+const onLink = (data: ClipboardData) => {
+    chrome.tabs.create({ url: data.url, active: true });
+}
+
+onMounted(() => {
+  chrome.storage.onChanged.addListener(onStorageChange);
   onStorageChange();
-  chrome.runtime.onMessage.addListener((request, sender) => {
-    console.log({ request, sender });
-    if(request.type === MESSAGE_TYPE.COPY) {
-      onStorageChange();
-    }
-  })
+});
+
+onUnmounted(() => {
+  chrome.storage.onChanged.removeListener(onStorageChange);
 })
-// import AppFloatingButton from '@/components/app-floating-button.vue';
 </script>
+
 <style lang="scss">
 .app-clipboard {
-  width: 300px;
-  height: 400px;
+  width: var(--max-width);
+  height: var(--max-height);
   display: grid;
   grid-template-rows: 40px 1fr;
   background-color: var(--bg-main-color);
@@ -64,10 +111,23 @@ onMounted(async () => {
     grid-template-columns: auto auto;
     justify-content: space-between;
     align-items: center;
-    //border-bottom: 1px solid white;
     padding-inline: 10px;
     background-color: var(--bg-header-color);
     color: var(--text-header-color);
+
+    &-logo {
+      display: flex;
+      align-items: center;
+
+      img {
+        width: 25px;
+        height: 25px;
+        object-fit: contain;
+        margin-right: 4px;
+      }
+
+      font-size: 14px;
+    }
   }
 
   &__content {
