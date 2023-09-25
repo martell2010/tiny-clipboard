@@ -4,7 +4,7 @@ export type ClipboardData = {
     url: string;
     hostname: string;
     date: Date | string;
-    content: string | Blob;
+    content: string;
     icon: string | null;
 }
 

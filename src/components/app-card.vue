@@ -34,6 +34,12 @@
         @click="emit('link', data)"
       />
       <app-action-button
+        v-if="isShareAvailable"
+        type="share"
+        title="Share data"
+        @click="emit('share', data)"
+      />
+      <app-action-button
         type="trash"
         title="Delete"
         @click="emit('remove', data.id)"
@@ -68,8 +74,11 @@ const emit = defineEmits<{
   toggle: [id: number];
   copy: [data: ClipboardData];
   link: [data: ClipboardData];
+  share: [data: ClipboardData];
   remove: [id: number];
 }>()
+
+const isShareAvailable = navigator.canShare()
 
 </script>
 <style lang="scss">

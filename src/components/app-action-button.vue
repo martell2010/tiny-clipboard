@@ -23,8 +23,9 @@ import copy from '@/assets/icons/copy.svg';
 import link from '@/assets/icons/link.svg';
 import collapse from '@/assets/icons/collapse.svg';
 import expand from '@/assets/icons/expand.svg';
+import share from '@/assets/icons/share.svg';
 
-type IconType = 'trash' | 'copy' | 'link' | 'collapse' | 'expand';
+type IconType = 'trash' | 'copy' | 'link' | 'collapse' | 'expand' | 'share';
 
 defineProps<{
   type: IconType;
@@ -37,11 +38,13 @@ const icons: Record<IconType, string> = {
   link: link,
   collapse: collapse,
   expand: expand,
+  share: share,
 }
 
 const emit = defineEmits<{
   click: [v: boolean]
 }>()
+
 </script>
 
 <style lang="scss">

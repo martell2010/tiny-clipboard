@@ -28,6 +28,7 @@
               @toggle="onToggle"
               @copy="onCopy"
               @link="onLink"
+              @share="onShare"
               @remove="onRemove"
             />
           </template>
@@ -63,10 +64,13 @@ const groupByHosName = (data: ClipboardGroupedList, [,target]:[string,ClipboardD
 
 const onStorageChange = () => {
   chrome.storage.sync.get().then((result) => {
+    console.time('onStorageChange');
+    console.log('onStorageChange', Object.entries(result).length);
     clipboardList.value = Object.entries(result)
         .filter(([k]) =>k.includes(ITEM_PREFIX_KEY))
         .sort(([, a]:[string, ClipboardData], [, b]:[string, ClipboardData]) => b.id - a.id)
         .reduce(groupByHosName, {})
+    console.timeEnd('onStorageChange');
   });
 }
 
@@ -82,6 +86,24 @@ const onCopy = (data: ClipboardData) => {
   navigator.clipboard.write(d);
 }
 
+const onShare = async (data: ClipboardData) => {
+  const { title, content: text, url } = data;
+  const shareData = {
+    title,
+    text,
+    url,
+  }
+
+  if (!navigator.share || !navigator.canShare(shareData)){
+    return
+  }
+
+  try {
+    await navigator.share(shareData);
+  } catch (err) {
+    console.log('Share error: ', err)
+  }
+}
 const onLink = (data: ClipboardData) => {
     chrome.tabs.create({ url: data.url, active: true });
 }

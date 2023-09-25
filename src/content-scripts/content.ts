@@ -5,7 +5,7 @@ const errorHandler = (e: unknown) => console.warn('Error', e);
 
 document.addEventListener('copy',  (event) => {
     const text = window?.getSelection()?.toString() ?? '';
-    const icon = document.querySelector('[rel="shortcut icon"]') || document.querySelector('[rel="icon"]');
+    const icon = document.querySelector('[rel="shortcut icon"]') ?? document.querySelector('[rel="icon"]');
     const date = new Date();
     const id = date.getTime();
 
@@ -19,7 +19,7 @@ document.addEventListener('copy',  (event) => {
         hostname: window.location.hostname,
         content: text,
         icon: (icon as HTMLLinkElement)?.href ?? '',
-    }
+    };
 
     chrome.storage.sync.set({ [`${ITEM_PREFIX_KEY}${id}`]: payload }).catch(errorHandler)
 
