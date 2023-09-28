@@ -78,7 +78,7 @@ const emit = defineEmits<{
   remove: [id: number];
 }>()
 
-const isShareAvailable = navigator.canShare()
+const isShareAvailable = navigator?.canShare?.()
 
 </script>
 <style lang="scss">
