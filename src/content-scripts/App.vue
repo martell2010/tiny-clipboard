@@ -46,31 +46,34 @@ import { ClipboardData } from "@/types/clipboard.ts";
 import AppCard from "@/components/app-card.vue";
 import AppCardList from "@/components/app-card-list.vue";
 import AppCardGroup from "@/components/app-card-group.vue";
-import { ITEM_PREFIX_KEY } from "@/constants";
+import {ITEM_PREFIX_KEY, STORAGE_NAME} from "@/constants";
 import logo from '@/assets/logo.svg';
 
 type ClipboardGroupedList = Record<ClipboardData['hostname'], ClipboardData[]>;
 
 const clipboardList = ref<ClipboardGroupedList>({});
 
-const groupByHosName = (data: ClipboardGroupedList, [,target]:[string,ClipboardData]) => {
-  if(target.hostname in data) {
-    data[target.hostname].push(target);
-    return data;
-  }
-
-  return { ...data, [target.hostname]: [target]}
-}
+// const groupByHosName = (data: ClipboardGroupedList, [,target]:[string,ClipboardData]) => {
+//   if(target.hostname in data) {
+//     data[target.hostname].push(target);
+//     return data;
+//   }
+//
+//   return { ...data, [target.hostname]: [target]}
+// }
 
 const onStorageChange = () => {
-  chrome.storage.sync.get().then((result) => {
+  chrome.storage.sync.get([STORAGE_NAME]).then((result) => {
     console.time('onStorageChange');
-    console.log('onStorageChange', Object.entries(result).length);
-    clipboardList.value = Object.entries(result)
-        .filter(([k]) =>k.includes(ITEM_PREFIX_KEY))
-        .sort(([, a]:[string, ClipboardData], [, b]:[string, ClipboardData]) => b.id - a.id)
-        .reduce(groupByHosName, {})
+    console.log('onStorageChange', result);
+    clipboardList.value = result[STORAGE_NAME];
+    // clipboardList.value = Object.entries(result)
+    //     .filter(([k]) =>k.includes(ITEM_PREFIX_KEY))
+    //     .reduce((acc, [k,v]) =>({...acc, [k]: v }), {})
+        // .sort(([, a]:[string, ClipboardData], [, b]:[string, ClipboardData]) => b.id - a.id)
+        // .reduce(groupByHosName, {})
     console.timeEnd('onStorageChange');
+    console.log('onStorageChange',  clipboardList.value);
   });
 }
 
