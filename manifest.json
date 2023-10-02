@@ -27,7 +27,6 @@
       "unlimitedStorage",
       "scripting",
       "tabs",
-      "contextMenus",
       "clipboardWrite",
       "clipboardRead"
     ]
