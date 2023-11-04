@@ -1,16 +1,36 @@
 {
+    "root": true,
+    "env": {
+        "browser": true,
+        "es6": true,
+        "node": true,
+        "jest": true
+    },
+    "plugins": [ "import" ],
     "extends": [
-        "plugin:vue/vue3-recommended",
+        "eslint:recommended",
+        "airbnb-base",
+        "plugin:vue/essential",
+        "plugin:vue/recommended",
+        "plugin:vue/strongly-recommended",
         "@vue/eslint-config-typescript"
     ],
     "rules": {
+        "import/extensions": "off",
+        "no-console": "off"
     },
     "settings": {
         "import/resolver": {
+            "typescript": {},
             "alias": {
-                "map": [["@", "./src"]],
-                "extensions": [",.js", ",.ts", ",.vue"]
+                "map": [ [ "@", "./src" ] ],
+                "extensions": [ ".js", ".ts", ".vue" ],
+                "node": {
+                    "extensions": [".js", ".jsx", ".ts", ".tsx", ".vue"],
+                    "paths": ["node_modules/"]
+                }
             }
         }
     }
+
 }
