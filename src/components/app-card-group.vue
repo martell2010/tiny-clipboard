@@ -15,18 +15,22 @@
 </template>
 
 <script setup lang="ts">
-import { ClipboardData } from "@/types/clipboard.ts";
-import { computed, ref, useCssModule } from "vue";
+import { computed, ref, useCssModule } from 'vue';
+import { ClipboardData } from '@/types/clipboard';
 
-const classes = useCssModule()
-
+const classes = useCssModule();
 
 const props = defineProps<{
   group: ClipboardData[],
 }>();
 
 defineSlots<{
-  default(props: { item: ClipboardData, isGrouped: boolean, isSingle: boolean, onToggle: () => void }): any
+  default(data: {
+    item: ClipboardData,
+    isGrouped: boolean,
+    isSingle: boolean,
+    onToggle: () => void
+  }): any
 }>();
 
 const isExpanded = ref<boolean>(false);
@@ -35,14 +39,14 @@ const isSingle = computed(() => props.group.length <= 1);
 
 const onToggle = () => {
   isExpanded.value = !isExpanded.value;
-}
+};
 
 const mainClasses = computed(() => [
-    classes['app-card-group'],
-    {
-      [classes['app-card-group--is-single']]: isSingle.value,
-      [classes['app-card-group--is-expanded']]: isExpanded.value
-    }
+  classes['app-card-group'],
+  {
+    [classes['app-card-group--is-single']]: isSingle.value,
+    [classes['app-card-group--is-expanded']]: isExpanded.value,
+  },
 ]);
 
 const itemClasses = computed(() => [
@@ -50,7 +54,7 @@ const itemClasses = computed(() => [
   {
     [classes['app-card-group__item--is-expanded']]: isExpanded.value,
     [classes['app-card-group__item--is-single']]: isSingle.value,
-  }
+  },
 ]);
 
 </script>

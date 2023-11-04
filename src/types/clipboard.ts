@@ -7,4 +7,3 @@ export type ClipboardData = {
     content: string;
     icon: string | null;
 }
-

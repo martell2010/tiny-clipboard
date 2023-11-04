@@ -8,16 +8,16 @@
       class="app-action-button"
       @click="emit('click', true)"
     >
-      <img
-        :src="icons[type]"
-        :alt="type"
-      >
+      <component
+        :is="icons[type]"
+        class="app-action-button__icon"
+      />
     </button>
   </Popper>
 </template>
 
 <script setup lang="ts">
-import Popper from "vue3-popper";
+import Popper from 'vue3-popper';
 import trash from '@/assets/icons/trash.svg';
 import copy from '@/assets/icons/copy.svg';
 import link from '@/assets/icons/link.svg';
@@ -33,17 +33,17 @@ defineProps<{
 }>();
 
 const icons: Record<IconType, string> = {
-  trash: trash,
-  copy: copy,
-  link: link,
-  collapse: collapse,
-  expand: expand,
-  share: share,
-}
+  trash,
+  copy,
+  link,
+  collapse,
+  expand,
+  share,
+};
 
 const emit = defineEmits<{
   click: [v: boolean]
-}>()
+}>();
 
 </script>
 
@@ -55,10 +55,18 @@ const emit = defineEmits<{
   color: inherit;
   cursor: pointer;
 
-  img {
+  &__icon {
+    color: var(--main-text-color);
     width: 25px;
     height: 25px;
-    object-fit: contain;
+    svg {
+      color: var(--main-text-color);
+    }
+    img {
+      object-fit: contain;
+    }
+
   }
+
 }
 </style>

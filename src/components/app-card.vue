@@ -61,8 +61,8 @@
   </div>
 </template>
 <script  setup lang="ts">
-import { ClipboardData } from "@/types/clipboard.ts";
-import AppActionButton from "@/components/app-action-button.vue";
+import { ClipboardData } from '@/types/clipboard';
+import AppActionButton from '@/components/app-action-button.vue';
 
 defineProps<{
   data: ClipboardData;
@@ -76,9 +76,9 @@ const emit = defineEmits<{
   link: [data: ClipboardData];
   share: [data: ClipboardData];
   remove: [id: number];
-}>()
+}>();
 
-const isShareAvailable = navigator?.canShare?.()
+const isShareAvailable = navigator?.canShare?.();
 
 </script>
 <style lang="scss">
@@ -89,7 +89,7 @@ const isShareAvailable = navigator?.canShare?.()
   border-radius: 10px;
   padding: 10px;
   max-width: calc(var(--max-width) - var(--main-padding) * 2);
-  box-shadow: 0 6px 26px rgba(0,0,0,.08);
+  box-shadow: 0 6px 26px var(--card-box-shadow-color);
   height: var(--card-height, auto);
   &--is-grouped {
     --card-height: 60px;
