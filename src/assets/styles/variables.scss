@@ -10,6 +10,7 @@
   --text-header-color: #f0f0f0;
   --main-color-blue: #0056B9;
   --main-color-yellow: #FFD800;
+  --card-box-shadow-color: rgba(0,0,0,.08);
 
   --popper-theme-background-color: #333333;
   --popper-theme-background-color-hover: #333333;
@@ -19,4 +20,13 @@
   --popper-theme-border-radius: 6px;
   --popper-theme-padding: 6px;
   --popper-theme-box-shadow: 0 6px 30px -6px rgba(0, 0, 0, 0.25);
+}
+
+@media (prefers-color-scheme: dark) {
+ :root {
+   --bg-main-color: #282828;
+   --main-text-color: #ffffff;
+   --bg-card-color: #3f3f3f;
+   --card-box-shadow-color: rgba(0,0,0,.3);
+ }
 }
