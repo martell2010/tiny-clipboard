@@ -1,8 +1,8 @@
 {
-    "name": "Clipboard",
+    "name": "Tiny clipboard",
     "manifest_version": 3,
-    "version": "0.1",
-    "description": "Cool clipboard extension for manage your data",
+    "version": "1.0.0",
+    "description": "Tiny clipboard extension for manage your clipboard data",
     "action": {
       "default_title": "Clipboard Popup",
       "default_popup": "index.html"
