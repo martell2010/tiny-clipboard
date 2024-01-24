@@ -3,7 +3,8 @@
     <template #header>
       <app-header />
     </template>
-    <app-card-list>
+    <app-empty v-if="isEmptyClipboardList" />
+    <app-card-list v-else>
       <app-card-group
         v-for="(group, key) in clipboardList"
         :key="key"
@@ -19,6 +20,7 @@
             @link="onLink"
             @share="onShare"
             @remove="onRemove"
+            @remove-group="onRemoveGroup(group)"
           />
         </template>
       </app-card-group>
@@ -27,7 +29,9 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, onUnmounted, ref } from 'vue';
+import {
+  computed, onMounted, onUnmounted, ref,
+} from 'vue';
 import { ClipboardData, ClipboardGroupedList } from '@/types/clipboard';
 import AppCard from '@/components/app-card.vue';
 import AppCardList from '@/components/app-card-list.vue';
@@ -35,17 +39,20 @@ import AppCardGroup from '@/components/app-card-group.vue';
 import ClipboardService from '@/services/ClipboardService.ts';
 import AppHeader from '@/components/app-header.vue';
 import MainLayout from '@/layouts/main-layout.vue';
+import AppEmpty from '@/components/app-empty.vue';
 
 const clipboardList = ref<ClipboardGroupedList>({});
 
 let ClipboardManager: ClipboardService | null = null;
 
-const onStorageChange = async () => {
+const isEmptyClipboardList = computed(() => !Object.keys(clipboardList.value).length);
+
+const setList = async () => {
   clipboardList.value = await ClipboardManager?.getSortedAndGroupedData() ?? {};
 };
 
 const onRemove = (key: number) => {
-  ClipboardManager?.removeItem(key);
+  ClipboardManager?.remove(key);
 };
 
 const onCopy = (data: ClipboardData) => {
@@ -60,9 +67,14 @@ const onLink = (data: ClipboardData) => {
   ClipboardManager?.openLink(data.url);
 };
 
+const onRemoveGroup = (group: ClipboardData[]) => {
+  const ids = group.map(({ id }) => id);
+  ClipboardManager?.remove(ids);
+};
+
 onMounted(() => {
-  ClipboardManager = new ClipboardService(window, document, chrome, onStorageChange);
-  onStorageChange();
+  ClipboardManager = new ClipboardService(window, document, chrome, setList);
+  setList();
 });
 
 onUnmounted(() => {

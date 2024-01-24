@@ -65,7 +65,12 @@ export default class ClipboardService {
    * @param {ChromeAPI} chrome - The chrome API
    * @param {ChromeApiEvent} changeStorageCallback - The change storage callback
    */
-  constructor(context: Window, document: Document, chrome: ChromeAPI, changeStorageCallback: ChromeApiEvent = () => Promise.resolve()) {
+  constructor(
+    context: Window,
+    document: Document,
+    chrome: ChromeAPI,
+    changeStorageCallback: ChromeApiEvent = () => Promise.resolve(),
+  ) {
     this.context = context;
     this.document = document;
     this.navigator = context.navigator;
@@ -114,19 +119,22 @@ export default class ClipboardService {
   /**
    * Sets a new clipboard item
    */
-  async setItem() {
+  async add() {
     await this.cleanUpStorage();
     const payload = this.createPayload();
     this.storage.set({ [`${ITEM_PREFIX_KEY}${payload.id}`]: payload }).catch(this.errorHandler);
   }
 
   /**
-   * Removes a clipboard item
-   * @param {number|string} key - The key of the clipboard item
+   * Removes a clipboard item(s)
+   * @param {number | string | (number | string)[]} k
    */
-  removeItem(key: number | string) {
-    const k = typeof key === 'string' && key?.startsWith(ITEM_PREFIX_KEY) ? key : `${ITEM_PREFIX_KEY}${key}`;
-    this.storage.remove(k).catch(this.errorHandler);
+  remove(k: number | string | (number | string)[]) {
+    const getKey = (key: number | string) => (typeof key === 'string' && key?.startsWith(ITEM_PREFIX_KEY) ? key : `${ITEM_PREFIX_KEY}${key}`);
+
+    const keys = Array.isArray(k) ? k.map(getKey) : getKey(k);
+
+    this.storage.remove(keys).catch(this.errorHandler);
   }
 
   /**
@@ -168,7 +176,7 @@ export default class ClipboardService {
           const lastItemKey = keys[keys.length - 1];
 
           if (lastItemKey) {
-            this.removeItem(lastItemKey);
+            this.remove(lastItemKey);
           }
         });
     }

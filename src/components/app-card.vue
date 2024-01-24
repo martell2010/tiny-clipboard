@@ -12,6 +12,11 @@
         title="Expand"
         @click="emit('toggle', data.id)"
       />
+      <app-action-button
+        type="trash"
+        title="Delete group"
+        @click="emit('removeGroup')"
+      />
     </div>
     <div
       v-else
@@ -76,6 +81,7 @@ const emit = defineEmits<{
   link: [data: ClipboardData];
   share: [data: ClipboardData];
   remove: [id: number];
+  removeGroup: any;
 }>();
 
 const isShareAvailable = navigator?.canShare?.();
