@@ -9,7 +9,7 @@
         Tiny clipboard
       </div>
       <div class="app-clipboard__header-setting">
-        #
+        #1.0.0
       </div>
     </header>
     <main class="app-clipboard__content">
@@ -43,68 +43,42 @@ import { ClipboardData } from '@/types/clipboard';
 import AppCard from '@/components/app-card.vue';
 import AppCardList from '@/components/app-card-list.vue';
 import AppCardGroup from '@/components/app-card-group.vue';
-import { ITEM_PREFIX_KEY } from '@/constants';
 import logo from '@/assets/logo.svg?url';
-
-type ClipboardGroupedList = Record<ClipboardData['hostname'], ClipboardData[]>;
+import ClipboardService from '@/services/ClipboardService.ts';
+import type { ClipboardGroupedList } from '@/services/ClipboardService.ts';
 
 const clipboardList = ref<ClipboardGroupedList>({});
 
-type StorageEntry = [string, ClipboardData];
-const onStorageChange = () => {
-  chrome.storage.sync.get().then((result) => {
-    const itemList = Object.entries(result)
-      .filter(([k]) => k.includes(ITEM_PREFIX_KEY))
-      .sort(([, a]:StorageEntry, [, b]:StorageEntry) => b.id - a.id)
-      .reduce((list: Map<ClipboardData['hostname'], ClipboardData[]>, [, v]:StorageEntry) => {
-        const data = [...(list.get(v.hostname) ?? []), v];
-        list.set(v.hostname, data);
+let ClipboardManager: ClipboardService | null = null;
 
-        return list;
-      }, new Map());
-
-    clipboardList.value = Object.fromEntries(itemList.entries());
-  });
+const onStorageChange = async () => {
+  clipboardList.value = await ClipboardManager?.getSortedAndGroupedData() ?? {};
 };
-onStorageChange();
 
 const onRemove = (key: number) => {
-  chrome.storage.sync.remove(`${ITEM_PREFIX_KEY}${key}`);
+  ClipboardManager?.removeItem(key);
 };
 
 const onCopy = (data: ClipboardData) => {
-  const type = 'text/plain';
-  const blob = new Blob([data.content], { type });
-  const d = [new ClipboardItem({ [type]: blob })];
-
-  navigator.clipboard.write(d);
+  ClipboardManager?.copy(data);
 };
 
-const onShare = async (data: ClipboardData) => {
-  const { title, content: text, url } = data;
-  const shareData = {
-    title,
-    text,
-    url,
-  };
-
-  if (!navigator.share || !navigator.canShare(shareData)) {
-    return;
-  }
-
-  try {
-    await navigator.share(shareData);
-  } catch (err) {
-    console.log('Share error: ', err);
-  }
+const onShare = (data: ClipboardData) => {
+  ClipboardManager?.share(data);
 };
+
 const onLink = (data: ClipboardData) => {
-  chrome.tabs.create({ url: data.url, active: true });
+  ClipboardManager?.openLink(data.url);
 };
 
-onMounted(() => { chrome.storage.onChanged.addListener(onStorageChange); });
+onMounted(() => {
+  ClipboardManager = new ClipboardService(window, document, chrome, onStorageChange);
+  onStorageChange();
+});
 
-onUnmounted(() => { chrome.storage.onChanged.removeListener(onStorageChange); });
+onUnmounted(() => {
+  ClipboardManager?.destroy();
+});
 </script>
 
 <style lang="scss">
