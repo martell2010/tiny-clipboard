@@ -7,3 +7,5 @@ export type ClipboardData = {
     content: string;
     icon: string | null;
 }
+
+export type ClipboardGroupedList = Record<ClipboardData['hostname'], ClipboardData[]>;

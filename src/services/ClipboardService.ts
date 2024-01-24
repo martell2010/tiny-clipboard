@@ -1,4 +1,4 @@
-import { ClipboardData } from '@/types/clipboard.ts';
+import { ClipboardData, ClipboardGroupedList } from '@/types/clipboard.ts';
 import { ITEM_PREFIX_KEY } from '@/constants';
 
 type ChromeApiEvent = (changes: chrome.storage.StorageChange, areaName: string) => Promise<void>
@@ -16,7 +16,6 @@ interface ChromeAPI {
 }
 
 type StorageEntry = [string, ClipboardData];
-export type ClipboardGroupedList = Record<ClipboardData['hostname'], ClipboardData[]>;
 
 /**
  * ClipboardService class
