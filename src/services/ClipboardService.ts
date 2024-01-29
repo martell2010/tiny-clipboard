@@ -84,7 +84,7 @@ export default class ClipboardService {
    * @type {ChromeAPI['storage']['local']}
    */
   get storage(): ChromeAPI['storage']['local'] {
-    return this.chrome.storage.local;
+    return this.chrome?.storage?.local;
   }
 
   /**
