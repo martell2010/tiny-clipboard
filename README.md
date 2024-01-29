@@ -1,18 +1,59 @@
-# Vue 3 + TypeScript + Vite
+# Tiny clipboard
 
-This template should help get you started developing with Vue 3 and TypeScript in Vite. The template uses Vue 3 `<script setup>` SFCs, check out the [script setup docs](https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup) to learn more.
+![Extension Logo/Icon](public/logo-128.png)
 
-## Recommended IDE Setup
+Tiny clipboard is a browser extension built with Vue, Vite, and TypeScript, designed to help users store and manage their clipboard history conveniently.
 
-- [VS Code](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur) + [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin).
+## Features
 
-## Type Support For `.vue` Imports in TS
+- **Clipboard History:** Automatically saves items copied to the clipboard in local storage.
+- **List View:** View a list of clipboard items with options to copy, go to the link, and remove.
+- **Convenient Management:** Easily manage your clipboard history directly from the extension popup.
 
-TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking. In editors, we need [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin) to make the TypeScript language service aware of `.vue` types.
+## Screenshots
 
-If the standalone TypeScript plugin doesn't feel fast enough to you, Volar has also implemented a [Take Over Mode](https://github.com/johnsoncodehk/volar/discussions/471#discussioncomment-1361669) that is more performant. You can enable it by the following steps:
+![Light](public/screenshot/tiny-clipboard-main-light.png) ![Dark](public/screenshot/tiny-clipboard-main-dark.png)
 
-1. Disable the built-in TypeScript Extension
-   1. Run `Extensions: Show Built-in Extensions` from VSCode's command palette
-   2. Find `TypeScript and JavaScript Language Features`, right click and select `Disable (Workspace)`
-2. Reload the VSCode window by running `Developer: Reload Window` from the command palette.
+
+## Installation
+
+1. Clone the repository:
+
+   ```bash
+   git clone https://github.com/your-username/your-repo.git
+   ```
+
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+
+3. 
+Build the extension:
+   ```bash
+   npm run build
+   ```
+
+## Load the extension in your browser:
+
+### *For Chrome, open chrome://extensions/, enable "Developer mode," and click "Load unpacked." Select the dist folder in your project directory.*
+### *For Firefox, open about:debugging#/runtime/this-firefox, click "Load Temporary Add-on," and select the dist/manifest.json file.*
+
+## Usage
+Copy any text to the clipboard.
+* Click on the icon in your browser.
+* Explore and manage your clipboard history.
+
+## Contributing
+If you would like to contribute to the project, follow these steps:
+
+Fork the repository.
+Create a new branch for your feature or bug fix.
+Make your changes and commit them.
+Push your changes to your fork.
+Open a pull request.
+
+## License
+This project is licensed under the MIT.
+
+
