@@ -28,8 +28,7 @@ Tiny clipboard is a browser extension built with Vue, Vite, and TypeScript, desi
    npm install
    ```
 
-3. 
-Build the extension:
+3. Build the extension:
    ```bash
    npm run build
    ```
